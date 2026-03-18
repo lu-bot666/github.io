@@ -1,0 +1,16 @@
+{
+  "framework": "老年人能力评估师职业能力框架",
+  "total_nodes": 23,
+  "total_edges": 68,
+  "node_types": [
+    "Skill",
+    "CompetencyFramework",
+    "JobRole",
+    "SkillCategory",
+    "ProficiencyLevel"
+  ],
+  "skill_categories": 3,
+  "skills_count": 13,
+  "proficiency_levels": 5,
+  "job_role": "老年人能力评估师"
+}

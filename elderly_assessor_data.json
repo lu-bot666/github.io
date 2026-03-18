@@ -1,0 +1,849 @@
+{
+  "nodes": [
+    {
+      "id": "comp_d7a3430c",
+      "type": "CompetencyFramework",
+      "label": "老年人能力评估师职业能力框架",
+      "properties": {
+        "name": "老年人能力评估师职业能力框架",
+        "version": "1.0",
+        "description": "基于职教1号文要求的老年人能力评估师职业能力图谱，包含知识、技能、素养三个维度",
+        "effective_date": "2026-01-01",
+        "industry": "养老服务",
+        "standard_reference": "职教1号文能力图谱要求"
+      },
+      "color": "#FF6B6B",
+      "size": 25
+    },
+    {
+      "id": "skil_ec36718f",
+      "type": "SkillCategory",
+      "label": "专业知识",
+      "properties": {
+        "name": "专业知识",
+        "dimension": "knowledge",
+        "description": "老年人能力评估相关理论知识体系",
+        "weight": 0.4
+      },
+      "color": "#4ECDC4",
+      "size": 20
+    },
+    {
+      "id": "skil_6a470702",
+      "type": "SkillCategory",
+      "label": "专业技能",
+      "properties": {
+        "name": "专业技能",
+        "dimension": "skill",
+        "description": "评估操作、工具使用和实践能力",
+        "weight": 0.4
+      },
+      "color": "#4ECDC4",
+      "size": 20
+    },
+    {
+      "id": "skil_5cfd88a9",
+      "type": "SkillCategory",
+      "label": "职业素养",
+      "properties": {
+        "name": "职业素养",
+        "dimension": "attitude",
+        "description": "职业道德、态度和价值观",
+        "weight": 0.2
+      },
+      "color": "#4ECDC4",
+      "size": 20
+    },
+    {
+      "id": "prof_96305622",
+      "type": "ProficiencyLevel",
+      "label": "初学者",
+      "properties": {
+        "name": "初学者",
+        "rank": 1,
+        "description": "基本了解，需要指导和监督"
+      },
+      "color": "#96CEB4",
+      "size": 16
+    },
+    {
+      "id": "prof_9cdddd8f",
+      "type": "ProficiencyLevel",
+      "label": "有经验者",
+      "properties": {
+        "name": "有经验者",
+        "rank": 2,
+        "description": "能独立完成常规任务"
+      },
+      "color": "#96CEB4",
+      "size": 16
+    },
+    {
+      "id": "prof_3eb506cc",
+      "type": "ProficiencyLevel",
+      "label": "熟练者",
+      "properties": {
+        "name": "熟练者",
+        "rank": 3,
+        "description": "熟练掌握，能处理复杂情况"
+      },
+      "color": "#96CEB4",
+      "size": 16
+    },
+    {
+      "id": "prof_7472e204",
+      "type": "ProficiencyLevel",
+      "label": "专家",
+      "properties": {
+        "name": "专家",
+        "rank": 4,
+        "description": "专业领域专家，能创新和改进"
+      },
+      "color": "#96CEB4",
+      "size": 16
+    },
+    {
+      "id": "prof_37e0d22b",
+      "type": "ProficiencyLevel",
+      "label": "权威",
+      "properties": {
+        "name": "权威",
+        "rank": 5,
+        "description": "领域权威，能制定标准和培训他人"
+      },
+      "color": "#96CEB4",
+      "size": 16
+    },
+    {
+      "id": "skil_c1f259ef",
+      "type": "Skill",
+      "label": "老年人综合评估理论",
+      "properties": {
+        "name": "老年人综合评估理论",
+        "description": "老年人能力评估的理论框架、模型和方法学",
+        "level": "intermediate",
+        "training_hours": 60,
+        "certification_required": true
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_4aa5bdaa",
+      "type": "Skill",
+      "label": "老年生理学与病理学基础",
+      "properties": {
+        "name": "老年生理学与病理学基础",
+        "description": "老年人身体机能变化、常见疾病和健康问题",
+        "level": "basic",
+        "training_hours": 40,
+        "certification_required": false
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_777d7051",
+      "type": "Skill",
+      "label": "老年心理学与社会学",
+      "properties": {
+        "name": "老年心理学与社会学",
+        "description": "老年人心理特点、社会适应和心理健康",
+        "level": "basic",
+        "training_hours": 30,
+        "certification_required": false
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_1176b296",
+      "type": "Skill",
+      "label": "ADL日常生活活动评估",
+      "properties": {
+        "name": "ADL日常生活活动评估",
+        "description": "使用标准化工具评估老年人日常生活自理能力",
+        "level": "intermediate",
+        "training_hours": 30,
+        "certification_required": true
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_c3b9d75c",
+      "type": "Skill",
+      "label": "MMSE简易精神状态检查",
+      "properties": {
+        "name": "MMSE简易精神状态检查",
+        "description": "评估老年人认知功能和精神状态",
+        "level": "intermediate",
+        "training_hours": 25,
+        "certification_required": true
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_2f03072c",
+      "type": "Skill",
+      "label": "IADL工具性日常生活活动评估",
+      "properties": {
+        "name": "IADL工具性日常生活活动评估",
+        "description": "评估老年人使用工具完成复杂生活活动的能力",
+        "level": "intermediate",
+        "training_hours": 20,
+        "certification_required": true
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_b5dffd1f",
+      "type": "Skill",
+      "label": "跌倒风险评估",
+      "properties": {
+        "name": "跌倒风险评估",
+        "description": "识别老年人跌倒风险因素并制定预防措施",
+        "level": "intermediate",
+        "training_hours": 20,
+        "certification_required": false
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_0a531a56",
+      "type": "Skill",
+      "label": "沟通与访谈技巧",
+      "properties": {
+        "name": "沟通与访谈技巧",
+        "description": "与老年人及其家属有效沟通和访谈的能力",
+        "level": "advanced",
+        "training_hours": 20,
+        "certification_required": false
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_08cab95f",
+      "type": "Skill",
+      "label": "评估报告撰写",
+      "properties": {
+        "name": "评估报告撰写",
+        "description": "规范、准确撰写评估报告的能力",
+        "level": "intermediate",
+        "training_hours": 30,
+        "certification_required": false
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_a32fcde9",
+      "type": "Skill",
+      "label": "个性化照护计划制定",
+      "properties": {
+        "name": "个性化照护计划制定",
+        "description": "基于评估结果制定个性化照护计划",
+        "level": "advanced",
+        "training_hours": 50,
+        "certification_required": true
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_53de053f",
+      "type": "Skill",
+      "label": "伦理与隐私保护",
+      "properties": {
+        "name": "伦理与隐私保护",
+        "description": "遵守职业道德，保护老年人隐私和权益",
+        "level": "advanced",
+        "training_hours": 15,
+        "certification_required": false
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_9069bd20",
+      "type": "Skill",
+      "label": "同理心与尊重",
+      "properties": {
+        "name": "同理心与尊重",
+        "description": "对老年人的同理心、尊重和人文关怀",
+        "level": "advanced",
+        "training_hours": 15,
+        "certification_required": false
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "skil_f817f192",
+      "type": "Skill",
+      "label": "客观公正评估",
+      "properties": {
+        "name": "客观公正评估",
+        "description": "保持客观、公正、无偏见的评估态度",
+        "level": "advanced",
+        "training_hours": 15,
+        "certification_required": false
+      },
+      "color": "#45B7D1",
+      "size": 18
+    },
+    {
+      "id": "jobr_1ec10886",
+      "type": "JobRole",
+      "label": "老年人能力评估师",
+      "properties": {
+        "title": "老年人能力评估师",
+        "category": "评估服务",
+        "description": "负责老年人综合能力评估，制定个性化照护计划，提供专业评估服务",
+        "min_experience_years": 2,
+        "certification_required": true,
+        "qualification_standard": "符合职教1号文能力要求"
+      },
+      "color": "#FFEAA7",
+      "size": 20
+    }
+  ],
+  "links": [
+    {
+      "source": "skil_ec36718f",
+      "target": "comp_d7a3430c",
+      "type": "defined_by_framework",
+      "label": "defined_by_framework",
+      "properties": {}
+    },
+    {
+      "source": "skil_6a470702",
+      "target": "comp_d7a3430c",
+      "type": "defined_by_framework",
+      "label": "defined_by_framework",
+      "properties": {}
+    },
+    {
+      "source": "skil_5cfd88a9",
+      "target": "comp_d7a3430c",
+      "type": "defined_by_framework",
+      "label": "defined_by_framework",
+      "properties": {}
+    },
+    {
+      "source": "skil_c1f259ef",
+      "target": "skil_ec36718f",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_c1f259ef",
+      "target": "prof_9cdddd8f",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_c1f259ef",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_c1f259ef",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_4aa5bdaa",
+      "target": "skil_ec36718f",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_4aa5bdaa",
+      "target": "prof_96305622",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_4aa5bdaa",
+      "target": "prof_9cdddd8f",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_4aa5bdaa",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_777d7051",
+      "target": "skil_ec36718f",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_777d7051",
+      "target": "prof_96305622",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_777d7051",
+      "target": "prof_9cdddd8f",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_777d7051",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_1176b296",
+      "target": "skil_6a470702",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_1176b296",
+      "target": "prof_9cdddd8f",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_1176b296",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_1176b296",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_c3b9d75c",
+      "target": "skil_6a470702",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_c3b9d75c",
+      "target": "prof_9cdddd8f",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_c3b9d75c",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_c3b9d75c",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_2f03072c",
+      "target": "skil_6a470702",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_2f03072c",
+      "target": "prof_9cdddd8f",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_2f03072c",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_2f03072c",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_b5dffd1f",
+      "target": "skil_6a470702",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_b5dffd1f",
+      "target": "prof_9cdddd8f",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_b5dffd1f",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_b5dffd1f",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_0a531a56",
+      "target": "skil_6a470702",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_0a531a56",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_0a531a56",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_0a531a56",
+      "target": "prof_37e0d22b",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_08cab95f",
+      "target": "skil_6a470702",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_08cab95f",
+      "target": "prof_9cdddd8f",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_08cab95f",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_08cab95f",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_a32fcde9",
+      "target": "skil_6a470702",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_a32fcde9",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_a32fcde9",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_a32fcde9",
+      "target": "prof_37e0d22b",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_53de053f",
+      "target": "skil_5cfd88a9",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_53de053f",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_53de053f",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_53de053f",
+      "target": "prof_37e0d22b",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_9069bd20",
+      "target": "skil_5cfd88a9",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_9069bd20",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_9069bd20",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_9069bd20",
+      "target": "prof_37e0d22b",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_f817f192",
+      "target": "skil_5cfd88a9",
+      "type": "belongs_to_category",
+      "label": "belongs_to_category",
+      "properties": {}
+    },
+    {
+      "source": "skil_f817f192",
+      "target": "prof_3eb506cc",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_f817f192",
+      "target": "prof_7472e204",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "skil_f817f192",
+      "target": "prof_37e0d22b",
+      "type": "has_proficiency",
+      "label": "has_proficiency",
+      "properties": {}
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_c1f259ef",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "熟练者",
+        "priority": "required"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_1176b296",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "熟练者",
+        "priority": "required"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_c3b9d75c",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "熟练者",
+        "priority": "required"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_2f03072c",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "熟练者",
+        "priority": "required"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_a32fcde9",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "熟练者",
+        "priority": "required"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_4aa5bdaa",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "有经验者",
+        "priority": "preferred"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_777d7051",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "有经验者",
+        "priority": "preferred"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_b5dffd1f",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "有经验者",
+        "priority": "preferred"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_0a531a56",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "有经验者",
+        "priority": "preferred"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_08cab95f",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "有经验者",
+        "priority": "preferred"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_53de053f",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "熟练者",
+        "priority": "required"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_9069bd20",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "熟练者",
+        "priority": "required"
+      }
+    },
+    {
+      "source": "jobr_1ec10886",
+      "target": "skil_f817f192",
+      "type": "requires_skill",
+      "label": "requires_skill",
+      "properties": {
+        "required_level": "熟练者",
+        "priority": "required"
+      }
+    }
+  ],
+  "metadata": {
+    "node_count": 23,
+    "link_count": 68,
+    "node_types": [
+      "SkillCategory",
+      "JobRole",
+      "CompetencyFramework",
+      "ProficiencyLevel",
+      "Skill"
+    ],
+    "link_types": [
+      "has_proficiency",
+      "belongs_to_category",
+      "requires_skill",
+      "defined_by_framework"
+    ]
+  }
+}

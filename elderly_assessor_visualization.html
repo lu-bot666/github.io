@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>评估师图谱可视化</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+        }
+        .header {
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 150px;
+        }
+        .stat-box h3 {
+            margin: 0 0 8px 0;
+            color: #3498db;
+            font-size: 16px;
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .control-btn {
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .control-btn:hover {
+            background: #2980b9;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+        .main-content {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+        }
+        #graph-container {
+            flex: 3;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        #sidebar {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+            overflow-y: auto;
+            min-width: 300px;
+        }
+        .node-info {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .node-info h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .node-property {
+            margin-bottom: 8px;
+        }
+        .property-label {
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+        .property-value {
+            color: #2c3e50;
+        }
+        .node {
+            cursor: pointer;
+            stroke-width: 2px;
+        }
+        .node:hover {
+            stroke: #000;
+            stroke-width: 3px;
+        }
+        .node-text {
+            font-size: 12px;
+            pointer-events: none;
+            text-anchor: middle;
+            fill: #333;
+            font-weight: bold;
+        }
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+            stroke-width: 2px;
+        }
+        .link-label {
+            font-size: 10px;
+            fill: #7f8c8d;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 300px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 养老服务师评估师图谱可视化</h1>
+            <p>基于ontology技能构建的知识图谱，包含技能、角色、人员、评估记录等实体关系</p>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <h3>节点总数</h3>
+                    <div class="stat-number">34</div>
+                </div>
+                <div class="stat-box">
+                    <h3>边总数</h3>
+                    <div class="stat-number">62</div>
+                </div>
+                <div class="stat-box">
+                    <h3>节点类型</h3>
+                    <div class="stat-number">9</div>
+                </div>
+                <div class="stat-box">
+                    <h3>关系类型</h3>
+                    <div class="stat-number">9</div>
+                </div>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FF6B6B;"></div>
+                    <span>能力框架</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4ECDC4;"></div>
+                    <span>技能类别</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #45B7D1;"></div>
+                    <span>技能</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #96CEB4;"></div>
+                    <span>熟练度等级</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FFEAA7;"></div>
+                    <span>工作角色</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #DDA0DD;"></div>
+                    <span>人员</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #98D8C8;"></div>
+                    <span>评估记录</span>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="control-btn" onclick="resetView()">重置视图</button>
+                <button class="control-btn" onclick="toggleLabels()">切换标签</button>
+                <button class="control-btn" onclick="exportPNG()">导出PNG</button>
+                <div style="flex: 1;"></div>
+                <span>节点大小: </span>
+                <input type="range" id="nodeSize" min="5" max="30" value="15" oninput="updateNodeSize(this.value)">
+                <span>引力强度: </span>
+                <input type="range" id="forceStrength" min="1" max="100" value="30" oninput="updateForce(this.value)">
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div id="graph-container"></div>
+            <div id="sidebar">
+                <h2>📋 节点信息</h2>
+                <div id="node-details">
+                    <p>点击图谱中的节点查看详细信息...</p>
+                </div>
+                <div id="type-stats">
+                    <h3>📊 类型统计</h3>
+                    <div id="node-type-list"></div>
+                    <div id="edge-type-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // 数据变量
+        const nodes = [
+  {
+    "id": "proj_22885ad4",
+    "type": "Project",
+    "label": "党支部规范化建设示范项目",
+    "properties": {
+      "name": "党支部规范化建设示范项目",
+      "status": "planning"
+    },
+    "color": "#F7DC6F"
+  },
+  {
+    "id": "task_67f0fa06",
+    "type": "Task",
+    "label": "制定年度工作计划",
+    "properties": {
+      "title": "制定年度工作计划",
+      "status": "in_progress",
+      "priority": "high"
+    },
+    "color": "#F8C471"
+  },
+  {
+    "id": "task_fad499da",
+    "type": "Task",
+    "label": "召开党员大会",
+    "properties": {
+      "title": "召开党员大会",
+      "status": "todo",
+      "priority": "medium",
+      "due_date": "2026-04-30"
+    },
+    "color": "#F8C471"
+  },
+  {
+    "id": "pers_32d69af3",
+    "type": "Person",
+    "label": "张三",
+    "properties": {
+      "name": "张三",
+      "role": "党支部书记"
+    },
+    "color": "#DDA0DD"
+  },
+  {
+    "id": "comp_2341e7df",
+    "type": "CompetencyFramework",
+    "label": "养老服务师职业能力框架",
+    "properties": {
+      "name": "养老服务师职业能力框架",
+      "version": "1.0",
+      "description": "基于AI技术的养老服务师职业能力图谱，包含知识、技能、态度三个维度",
+      "effective_date": "2026-01-01",
+      "industry": "养老服务"
+    },
+    "color": "#FF6B6B"
+  },
+  {
+    "id": "skil_c5cb5662",
+    "type": "SkillCategory",
+    "label": "专业知识",
+    "properties": {
+      "name": "专业知识",
+      "dimension": "knowledge",
+      "description": "养老服务相关理论知识体系",
+      "weight": 0.4
+    },
+    "color": "#4ECDC4"
+  },
+  {
+    "id": "skil_e3ef8a71",
+    "type": "SkillCategory",
+    "label": "专业技能",
+    "properties": {
+      "name": "专业技能",
+      "dimension": "skill",
+      "description": "实际操作和执行能力",
+      "weight": 0.4
+    },
+    "color": "#4ECDC4"
+  },
+  {
+    "id": "skil_195fb9db",
+    "type": "SkillCategory",
+    "label": "职业态度",
+    "properties": {
+      "name": "职业态度",
+      "dimension": "attitude",
+      "description": "工作态度、价值观和职业道德",
+      "weight": 0.2
+    },
+    "color": "#4ECDC4"
+  },
+  {
+    "id": "prof_61ff62dc",
+    "type": "ProficiencyLevel",
+    "label": "初学者",
+    "properties": {
+      "name": "初学者",
+      "rank": 1,
+      "description": "基本了解，需要指导和监督",
+      "criteria": "能够描述基本概念，在指导下完成简单任务"
+    },
+    "color": "#96CEB4"
+  },
+  {
+    "id": "prof_bf8dba0c",
+    "type": "ProficiencyLevel",
+    "label": "有经验者",
+    "properties": {
+      "name": "有经验者",
+      "rank": 2,
+      "description": "能够独立完成常规任务",
+      "criteria": "能够独立完成大部分日常工作，需要偶尔指导"
+    },
+    "color": "#96CEB4"
+  },
+  {
+    "id": "prof_e01746e5",
+    "type": "ProficiencyLevel",
+    "label": "熟练者",
+    "properties": {
+      "name": "熟练者",
+      "rank": 3,
+      "description": "熟练掌握，能够处理复杂情况",
+      "criteria": "能够处理复杂情况和非常规问题，能够指导他人"
+    },
+    "color": "#96CEB4"
+  },
+  {
+    "id": "prof_8b21b909",
+    "type": "ProficiencyLevel",
+    "label": "专家",
+    "properties": {
+      "name": "专家",
+      "rank": 4,
+      "description": "专业领域专家，能够创新和改进",
+      "criteria": "在专业领域有深入理解，能够创新和改进流程"
+    },
+    "color": "#96CEB4"
+  },
+  {
+    "id": "prof_14b2e298",
+    "type": "ProficiencyLevel",
+    "label": "权威",
+    "properties": {
+      "name": "权威",
+      "rank": 5,
+      "description": "领域权威，能够制定标准和培训他人",
+      "criteria": "能够制定行业标准，培训和指导他人，推动行业发展"
+    },
+    "color": "#96CEB4"
+  },
+  {
+    "id": "skil_bf6e7039",
+    "type": "Skill",
+    "label": "老年生理学基础",
+    "properties": {
+      "name": "老年生理学基础",
+      "description": "了解老年人身体变化和生理特点",
+      "level": "basic",
+      "training_hours": 40
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_c81a3d76",
+    "type": "Skill",
+    "label": "老年人生活照料",
+    "properties": {
+      "name": "老年人生活照料",
+      "description": "协助老年人日常生活活动的能力",
+      "level": "intermediate",
+      "training_hours": 80,
+      "certification_required": true
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_dafc1c55",
+    "type": "Skill",
+    "label": "同理心与沟通",
+    "properties": {
+      "name": "同理心与沟通",
+      "description": "与老年人有效沟通和情感支持的能力",
+      "level": "advanced",
+      "training_hours": 20
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_aa706ba8",
+    "type": "Skill",
+    "label": "老年常见病护理",
+    "properties": {
+      "name": "老年常见病护理",
+      "description": "老年人常见疾病的护理知识和技能",
+      "level": "advanced",
+      "training_hours": 100,
+      "certification_required": true
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_2ec25f96",
+    "type": "Skill",
+    "label": "应急处理与安全防护",
+    "properties": {
+      "name": "应急处理与安全防护",
+      "description": "应对老年人突发情况和安全防护措施",
+      "level": "intermediate",
+      "training_hours": 60,
+      "certification_required": true
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "jobr_a16b04b5",
+    "type": "JobRole",
+    "label": "初级养老服务师",
+    "properties": {
+      "title": "初级养老服务师",
+      "category": "护理服务",
+      "description": "负责老年人基本生活照料和日常护理",
+      "min_experience_years": 1,
+      "certification_required": true
+    },
+    "color": "#FFEAA7"
+  },
+  {
+    "id": "jobr_ea2ed515",
+    "type": "JobRole",
+    "label": "高级养老服务师",
+    "properties": {
+      "title": "高级养老服务师",
+      "category": "护理服务",
+      "description": "负责老年人专业护理和团队指导",
+      "min_experience_years": 3,
+      "certification_required": true
+    },
+    "color": "#FFEAA7"
+  },
+  {
+    "id": "jobr_c8b5b9b4",
+    "type": "JobRole",
+    "label": "老年人评估师",
+    "properties": {
+      "title": "老年人评估师",
+      "category": "评估服务",
+      "description": "负责老年人综合能力评估，制定个性化照护计划",
+      "min_experience_years": 2,
+      "certification_required": true
+    },
+    "color": "#FFEAA7"
+  },
+  {
+    "id": "skil_437062d7",
+    "type": "Skill",
+    "label": "老年综合评估理论",
+    "properties": {
+      "name": "老年综合评估理论",
+      "description": "老年人全面评估的理论框架和方法体系",
+      "level": "intermediate",
+      "training_hours": 60,
+      "certification_required": true
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_2bc9ff04",
+    "type": "Skill",
+    "label": "评估工具应用",
+    "properties": {
+      "name": "评估工具应用",
+      "description": "各种老年人评估工具的使用和操作能力",
+      "level": "intermediate",
+      "training_hours": 40,
+      "certification_required": true
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_1aee854a",
+    "type": "Skill",
+    "label": "评估报告撰写",
+    "properties": {
+      "name": "评估报告撰写",
+      "description": "规范、准确撰写老年人评估报告的能力",
+      "level": "intermediate",
+      "training_hours": 30
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_9869449d",
+    "type": "Skill",
+    "label": "个性化照护计划制定",
+    "properties": {
+      "name": "个性化照护计划制定",
+      "description": "基于评估结果制定个性化照护计划的能力",
+      "level": "advanced",
+      "training_hours": 50,
+      "certification_required": true
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_ac829803",
+    "type": "Skill",
+    "label": "客观公正评估",
+    "properties": {
+      "name": "客观公正评估",
+      "description": "保持客观、公正的评估态度，避免主观偏见",
+      "level": "advanced",
+      "training_hours": 20
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_b30eeb41",
+    "type": "Skill",
+    "label": "ADL日常生活活动评估",
+    "properties": {
+      "name": "ADL日常生活活动评估",
+      "description": "评估老年人日常生活自理能力（吃饭、穿衣、洗漱、如厕等）的工具应用",
+      "level": "intermediate",
+      "training_hours": 30,
+      "certification_required": true
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_797d89fe",
+    "type": "Skill",
+    "label": "MMSE简易精神状态检查",
+    "properties": {
+      "name": "MMSE简易精神状态检查",
+      "description": "评估老年人认知功能（定向、记忆、注意、计算、语言等）的标准工具",
+      "level": "intermediate",
+      "training_hours": 25,
+      "certification_required": true
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_34bcffeb",
+    "type": "Skill",
+    "label": "跌倒风险评估",
+    "properties": {
+      "name": "跌倒风险评估",
+      "description": "识别老年人跌倒风险因素并制定预防措施的能力",
+      "level": "intermediate",
+      "training_hours": 20,
+      "certification_required": false
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "skil_92d5401a",
+    "type": "Skill",
+    "label": "社交功能评估",
+    "properties": {
+      "name": "社交功能评估",
+      "description": "评估老年人社会交往和参与能力",
+      "level": "basic",
+      "training_hours": 15,
+      "certification_required": false
+    },
+    "color": "#45B7D1"
+  },
+  {
+    "id": "pers_a4339753",
+    "type": "Person",
+    "label": "李四",
+    "properties": {
+      "name": "李四",
+      "role": "老年人评估师"
+    },
+    "color": "#DDA0DD"
+  },
+  {
+    "id": "pers_36cc1e99",
+    "type": "Person",
+    "label": "王奶奶",
+    "properties": {
+      "name": "王奶奶",
+      "role": "老年人"
+    },
+    "color": "#DDA0DD"
+  },
+  {
+    "id": "assess_4014415a",
+    "type": "Assessment",
+    "label": "评估 85分",
+    "properties": {
+      "person_id": "pers_36cc1e99",
+      "skill_id": "skil_b30eeb41",
+      "level_id": "prof_e01746e5",
+      "date": "2026-03-14",
+      "score": 85,
+      "assessor": "李四",
+      "notes": "王奶奶在吃饭、穿衣方面基本自理，洗漱需部分协助，如厕需少量帮助。"
+    },
+    "color": "#98D8C8"
+  },
+  {
+    "id": "jobr_585f0f10",
+    "type": "JobRole",
+    "label": "高级老年人评估师",
+    "properties": {
+      "title": "高级老年人评估师",
+      "category": "评估服务",
+      "description": "负责复杂案例评估、团队培训和质量控制",
+      "min_experience_years": 5,
+      "certification_required": true
+    },
+    "color": "#FFEAA7"
+  }
+];
+        const edges = [
+  {
+    "source": "proj_22885ad4",
+    "target": "task_67f0fa06",
+    "type": "has_task",
+    "label": "有任务",
+    "properties": {}
+  },
+  {
+    "source": "proj_22885ad4",
+    "target": "task_fad499da",
+    "type": "has_task",
+    "label": "有任务",
+    "properties": {}
+  },
+  {
+    "source": "task_67f0fa06",
+    "target": "pers_32d69af3",
+    "type": "assigned_to",
+    "label": "分配给",
+    "properties": {}
+  },
+  {
+    "source": "skil_bf6e7039",
+    "target": "skil_c5cb5662",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_c81a3d76",
+    "target": "skil_e3ef8a71",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_dafc1c55",
+    "target": "skil_195fb9db",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_aa706ba8",
+    "target": "skil_c5cb5662",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_2ec25f96",
+    "target": "skil_e3ef8a71",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_bf6e7039",
+    "target": "prof_61ff62dc",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_bf6e7039",
+    "target": "prof_bf8dba0c",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_c81a3d76",
+    "target": "prof_e01746e5",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "jobr_a16b04b5",
+    "target": "skil_bf6e7039",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "有经验者",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_a16b04b5",
+    "target": "skil_c81a3d76",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "熟练者",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_ea2ed515",
+    "target": "skil_aa706ba8",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "专家",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_ea2ed515",
+    "target": "skil_dafc1c55",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "熟练者",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "skil_c5cb5662",
+    "target": "comp_2341e7df",
+    "type": "defined_by_framework",
+    "label": "由框架定义",
+    "properties": {}
+  },
+  {
+    "source": "skil_e3ef8a71",
+    "target": "comp_2341e7df",
+    "type": "defined_by_framework",
+    "label": "由框架定义",
+    "properties": {}
+  },
+  {
+    "source": "skil_195fb9db",
+    "target": "comp_2341e7df",
+    "type": "defined_by_framework",
+    "label": "由框架定义",
+    "properties": {}
+  },
+  {
+    "source": "skil_437062d7",
+    "target": "skil_c5cb5662",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_2bc9ff04",
+    "target": "skil_e3ef8a71",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_1aee854a",
+    "target": "skil_e3ef8a71",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_9869449d",
+    "target": "skil_e3ef8a71",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_ac829803",
+    "target": "skil_195fb9db",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_437062d7",
+    "target": "prof_bf8dba0c",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_437062d7",
+    "target": "prof_e01746e5",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_437062d7",
+    "target": "prof_8b21b909",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_2bc9ff04",
+    "target": "prof_e01746e5",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_2bc9ff04",
+    "target": "prof_8b21b909",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_437062d7",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "熟练者",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_2bc9ff04",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "熟练者",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_1aee854a",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "有经验者",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_9869449d",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "专家",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_ac829803",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "熟练者",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_bf6e7039",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "有经验者",
+      "priority": "preferred"
+    }
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_dafc1c55",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "熟练者",
+      "priority": "preferred"
+    }
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "comp_2341e7df",
+    "type": "defined_by_framework",
+    "label": "由框架定义",
+    "properties": {}
+  },
+  {
+    "source": "skil_b30eeb41",
+    "target": "skil_e3ef8a71",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_797d89fe",
+    "target": "skil_e3ef8a71",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_34bcffeb",
+    "target": "skil_e3ef8a71",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_92d5401a",
+    "target": "skil_e3ef8a71",
+    "type": "belongs_to_category",
+    "label": "属于类别",
+    "properties": {}
+  },
+  {
+    "source": "skil_b30eeb41",
+    "target": "prof_e01746e5",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_b30eeb41",
+    "target": "prof_8b21b909",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_797d89fe",
+    "target": "prof_e01746e5",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_797d89fe",
+    "target": "prof_8b21b909",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_34bcffeb",
+    "target": "prof_bf8dba0c",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_34bcffeb",
+    "target": "prof_e01746e5",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_92d5401a",
+    "target": "prof_61ff62dc",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "skil_92d5401a",
+    "target": "prof_bf8dba0c",
+    "type": "has_proficiency",
+    "label": "有熟练度",
+    "properties": {}
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_b30eeb41",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "熟练者",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_797d89fe",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "熟练者",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_34bcffeb",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "有经验者",
+      "priority": "preferred"
+    }
+  },
+  {
+    "source": "jobr_c8b5b9b4",
+    "target": "skil_92d5401a",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "有经验者",
+      "priority": "optional"
+    }
+  },
+  {
+    "source": "pers_36cc1e99",
+    "target": "assess_4014415a",
+    "type": "has_assessment",
+    "label": "有评估",
+    "properties": {}
+  },
+  {
+    "source": "assess_4014415a",
+    "target": "skil_b30eeb41",
+    "type": "assesses_skill",
+    "label": "评估技能",
+    "properties": {}
+  },
+  {
+    "source": "assess_4014415a",
+    "target": "prof_e01746e5",
+    "type": "uses_proficiency",
+    "label": "使用熟练度",
+    "properties": {}
+  },
+  {
+    "source": "jobr_585f0f10",
+    "target": "comp_2341e7df",
+    "type": "defined_by_framework",
+    "label": "由框架定义",
+    "properties": {}
+  },
+  {
+    "source": "jobr_585f0f10",
+    "target": "skil_b30eeb41",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "专家",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_585f0f10",
+    "target": "skil_797d89fe",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "专家",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_585f0f10",
+    "target": "skil_34bcffeb",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "熟练者",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_585f0f10",
+    "target": "skil_437062d7",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "权威",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_585f0f10",
+    "target": "skil_9869449d",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "权威",
+      "priority": "required"
+    }
+  },
+  {
+    "source": "jobr_585f0f10",
+    "target": "skil_ac829803",
+    "type": "requires_skill",
+    "label": "需要技能",
+    "properties": {
+      "required_level": "专家",
+      "priority": "required"
+    }
+  }
+];
+        
+        // 图尺寸
+        const width = document.getElementById('graph-container').offsetWidth;
+        const height = document.getElementById('graph-container').offsetHeight;
+        
+        // 创建SVG
+        const svg = d3.select('#graph-container')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+        
+        // 创建缩放容器
+        const g = svg.append('g');
+        
+        // 添加缩放行为
+        const zoom = d3.zoom()
+            .scaleExtent([0.1, 4])
+            .on('zoom', (event) => {
+                g.attr('transform', event.transform);
+            });
+        
+        svg.call(zoom);
+        
+        // 创建力模拟
+        const simulation = d3.forceSimulation(nodes)
+            .force('link', d3.forceLink(edges).id(d => d.id).distance(100))
+            .force('charge', d3.forceManyBody().strength(-300))
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collision', d3.forceCollide().radius(40))
+            .on('tick', ticked);
+        
+        // 创建线（边）
+        const link = g.append('g')
+            .selectAll('line')
+            .data(edges)
+            .enter()
+            .append('line')
+            .attr('class', 'link')
+            .attr('stroke-width', 2)
+            .attr('stroke', d => d.type === 'requires_skill' ? '#e74c3c' : '#3498db');
+        
+        // 创建边的标签
+        const linkLabels = g.append('g')
+            .selectAll('text')
+            .data(edges)
+            .enter()
+            .append('text')
+            .attr('class', 'link-label')
+            .text(d => d.label)
+            .attr('font-size', '10px')
+            .attr('fill', '#7f8c8d');
+        
+        // 创建节点组
+        const node = g.append('g')
+            .selectAll('circle')
+            .data(nodes)
+            .enter()
+            .append('circle')
+            .attr('class', 'node')
+            .attr('r', 15)
+            .attr('fill', d => d.color)
+            .attr('stroke', d => d3.color(d.color).darker())
+            .attr('stroke-width', 2)
+            .call(d3.drag()
+                .on('start', dragstarted)
+                .on('drag', dragged)
+                .on('end', dragended))
+            .on('click', handleNodeClick)
+            .on('mouseover', handleMouseOver)
+            .on('mouseout', handleMouseOut);
+        
+        // 创建节点标签
+        const labels = g.append('g')
+            .selectAll('text')
+            .data(nodes)
+            .enter()
+            .append('text')
+            .attr('class', 'node-text')
+            .text(d => d.label.length > 20 ? d.label.substring(0, 20) + '...' : d.label)
+            .attr('font-size', '12px')
+            .attr('fill', '#333');
+        
+        // 更新函数
+        function ticked() {
+            link
+                .attr('x1', d => d.source.x)
+                .attr('y1', d => d.source.y)
+                .attr('x2', d => d.target.x)
+                .attr('y2', d => d.target.y);
+            
+            linkLabels
+                .attr('x', d => (d.source.x + d.target.x) / 2)
+                .attr('y', d => (d.source.y + d.target.y) / 2);
+            
+            node
+                .attr('cx', d => d.x)
+                .attr('cy', d => d.y);
+            
+            labels
+                .attr('x', d => d.x)
+                .attr('y', d => d.y + 5);
+        }
+        
+        // 拖动函数
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+        
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+        
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+        
+        // 节点点击处理
+        function handleNodeClick(event, d) {
+            // 显示节点详细信息
+            const details = document.getElementById('node-details');
+            let html = '<div class="node-info">' +
+                '<h3>' + d.label + '</h3>' +
+                '<div class="node-property">' +
+                '<span class="property-label">类型:</span>' +
+                '<span class="property-value">' + d.type + '</span>' +
+                '</div>' +
+                '<div class="node-property">' +
+                '<span class="property-label">ID:</span>' +
+                '<span class="property-value">' + d.id + '</span>' +
+                '</div>';
+            
+            // 显示属性
+            for (const [key, value] of Object.entries(d.properties)) {
+                html += '<div class="node-property">' +
+                    '<span class="property-label">' + key + ':</span>' +
+                    '<span class="property-value">' + value + '</span>' +
+                    '</div>';
+            }
+            
+            // 显示关联关系
+            const connectedEdges = edges.filter(e => e.source.id === d.id || e.target.id === d.id);
+            if (connectedEdges.length > 0) {
+                html += '<div class="node-property">' +
+                    '<span class="property-label">关联关系:</span>' +
+                    '<ul style="margin: 5px 0 0 0; padding-left: 20px;">';
+                connectedEdges.forEach(e => {
+                    const otherNode = e.source.id === d.id ? 
+                        nodes.find(n => n.id === e.target) : 
+                        nodes.find(n => n.id === e.source);
+                    const direction = e.source.id === d.id ? '→' : '←';
+                    html += '<li>' + direction + ' ' + (otherNode ? otherNode.label : '未知') + ' (' + e.label + ')</li>';
+                });
+                html += '</ul></div>';
+            }
+            
+            html += '</div>';
+            details.innerHTML = html;
+            
+            // 高亮相关节点和边
+            highlightRelatedNodes(d.id);
+        }
+        
+        // 高亮相关节点
+        function highlightRelatedNodes(nodeId) {
+            // 重置所有高亮
+            node.attr('stroke-width', 2)
+                .attr('stroke', d => d3.color(d.color).darker());
+            link.attr('stroke', d => d.type === 'requires_skill' ? '#e74c3c' : '#3498db')
+                .attr('stroke-width', 2);
+            
+            // 高亮相关边
+            link.filter(d => d.source.id === nodeId || d.target.id === nodeId)
+                .attr('stroke', '#f39c12')
+                .attr('stroke-width', 4);
+            
+            // 高亮相关节点
+            const connectedNodeIds = new Set();
+            edges.forEach(e => {
+                if (e.source.id === nodeId) connectedNodeIds.add(e.target.id);
+                if (e.target.id === nodeId) connectedNodeIds.add(e.source.id);
+            });
+            
+            node.filter(d => connectedNodeIds.has(d.id))
+                .attr('stroke', '#f39c12')
+                .attr('stroke-width', 4);
+            
+            // 高亮当前节点
+            node.filter(d => d.id === nodeId)
+                .attr('stroke', '#e74c3c')
+                .attr('stroke-width', 4);
+        }
+        
+        // 鼠标悬停处理
+        function handleMouseOver(event, d) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.innerHTML = '<strong>' + d.label + '</strong><br/>' + d.type;
+            tooltip.style.opacity = 1;
+            tooltip.style.left = (event.pageX + 10) + 'px';
+            tooltip.style.top = (event.pageY - 10) + 'px';
+        }
+        
+        function handleMouseOut() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.style.opacity = 0;
+        }
+        
+        // 控制函数
+        function resetView() {
+            svg.transition()
+                .duration(750)
+                .call(zoom.transform, d3.zoomIdentity);
+            highlightRelatedNodes(null);
+            document.getElementById('node-details').innerHTML = '<p>点击图谱中的节点查看详细信息...</p>';
+        }
+        
+        let labelsVisible = true;
+        function toggleLabels() {
+            labelsVisible = !labelsVisible;
+            labels.style('display', labelsVisible ? 'block' : 'none');
+            linkLabels.style('display', labelsVisible ? 'block' : 'none');
+        }
+        
+        function exportPNG() {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            
+            // 设置白色背景
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, width, height);
+            
+            // 将SVG转换为图片
+            const serializer = new XMLSerializer();
+            const source = serializer.serializeToString(svg.node());
+            const img = new Image();
+            const svgBlob = new Blob([source], {type: 'image/svg+xml;charset=utf-8'});
+            const url = URL.createObjectURL(svgBlob);
+            
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0);
+                const pngUrl = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.download = '评估师图谱.png';
+                a.href = pngUrl;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+        }
+        
+        function updateNodeSize(size) {
+            node.attr('r', size);
+            simulation.force('collision', d3.forceCollide().radius(parseInt(size) + 10));
+            simulation.alpha(0.3).restart();
+        }
+        
+        function updateForce(strength) {
+            simulation.force('charge', d3.forceManyBody().strength(-strength));
+            simulation.alpha(0.3).restart();
+        }
+        
+        // 初始化类型统计显示
+        function initTypeStats() {
+            const nodeCounts = {};
+            nodes.forEach(n => {
+                nodeCounts[n.type] = (nodeCounts[n.type] || 0) + 1;
+            });
+            
+            const edgeCounts = {};
+            edges.forEach(e => {
+                edgeCounts[e.type] = (edgeCounts[e.type] || 0) + 1;
+            });
+            
+            let nodeList = '<h4>节点类型分布</h4>';
+            for (const [type, count] of Object.entries(nodeCounts)) {
+                nodeList += '<div>' + type + ': ' + count + '</div>';
+            }
+            
+            let edgeList = '<h4>关系类型分布</h4>';
+            for (const [type, count] of Object.entries(edgeCounts)) {
+                edgeList += '<div>' + type + ': ' + count + '</div>';
+            }
+            
+            document.getElementById('node-type-list').innerHTML = nodeList;
+            document.getElementById('edge-type-list').innerHTML = edgeList;
+        }
+        
+        // 初始化
+        initTypeStats();
+        
+        // 更新鼠标移动时的工具提示
+        svg.on('mousemove', function(event) {
+            const tooltip = document.getElementById('tooltip');
+            if (tooltip.style.opacity > 0) {
+                tooltip.style.left = (event.pageX + 10) + 'px';
+                tooltip.style.top = (event.pageY - 10) + 'px';
+            }
+        });
+    </script>
+</body>
+</html>
